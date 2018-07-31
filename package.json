@@ -1,0 +1,19 @@
+{
+  "name": "async",
+  "version": "1.0.0",
+  "description": "This is a training project to know better how different methods for async calls works",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnastasiaSokolova/serverCalls.git"
+  },
+  "author": "Anastasiia Sokolova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnastasiaSokolova/serverCalls/issues"
+  },
+  "homepage": "https://github.com/AnastasiaSokolova/serverCalls#readme"
+}
