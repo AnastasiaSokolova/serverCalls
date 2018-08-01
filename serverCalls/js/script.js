@@ -130,3 +130,46 @@ generator.next().value.then(function(response) {
         })
     })
 })
+
+
+/*==== Async/Await case ====*/
+
+function AsyncAwaitRequest(url) {
+
+    return new Promise(function(resolve, reject) {
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState != 4) return;
+
+            if (xhr.status != 200) {
+                var error = new Error(this.statusText);
+                reject(error);
+            } else {
+                resolve(JSON.parse(this.response))
+            }
+        }
+    })
+}
+
+async function getData(url) {
+    var response = await AsyncAwaitRequest(url);
+    return response
+}
+
+getData('https://api.themoviedb.org/3/movie/' + movie_id + key).then(function(response) {
+    console.log(response)
+    document.getElementById('movie-name').innerText = response.title;
+})
+
+getData('https://api.themoviedb.org/3/movie/' + movie_id + '/credits' + key).then(function(response) {
+    document.getElementById('team-size').innerText = response.crew.length;
+    person_id = (response.crew[0]).id;
+    getData('https://api.themoviedb.org/3/person/' + person_id + key).then(function(response) {
+        document.getElementById('member-name').innerText = response.name;
+        image_path = response.profile_path;
+        document.getElementById('member-picture').src = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + image_path + key;
+    })
+})
