@@ -47,6 +47,7 @@ xmlRequest('https://api.themoviedb.org/3/movie/' + movie_id + key, 1);
 
 /*==== Promises case ====*/
 
+
 function promiseRequest(url) {
 
     return new Promise(function(resolve, reject) {
@@ -82,3 +83,50 @@ promiseRequest('https://api.themoviedb.org/3/movie/' + movie_id + key)
      }).catch(function(error) {
           console.log(error);
 });
+
+
+/*==== Generator case ====*/
+
+var person_id = null; // I know it a bad approach
+
+function generatorRequest(url) {
+
+    return new Promise(function(resolve, reject) {
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState != 4) return;
+
+            if (xhr.status != 200) {
+                var error = new Error(this.statusText);
+                reject(error);
+            } else {
+                resolve(JSON.parse(this.response))
+            }
+        }
+    })
+}
+
+function* getData() {
+    yield generatorRequest('https://api.themoviedb.org/3/movie/' + movie_id + key);
+    yield generatorRequest('https://api.themoviedb.org/3/movie/' + movie_id + '/credits' + key);
+    yield generatorRequest('https://api.themoviedb.org/3/person/' + person_id + key);
+
+}
+
+var generator = getData();
+
+generator.next().value.then(function(response) {
+    document.getElementById('movie-name').innerText = response.title;
+    generator.next().value.then(function(response) {
+        document.getElementById('team-size').innerText = response.crew.length;
+        person_id = (response.crew[0]).id;
+        generator.next().value.then(function(response) {
+            document.getElementById('member-name').innerText = response.name;
+            image_path = response.profile_path;
+            document.getElementById('member-picture').src = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + image_path + key;
+        })
+    })
+})
